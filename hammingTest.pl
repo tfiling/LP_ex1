@@ -10,10 +10,16 @@ test(Summary, Predicate) :-
   write('\ndone.').
 
 test :-
-  test('empty words', (
-    hamming(0, [], []),
-    \+hamming(1, [], [])
-  )).
+    test('empty words', (
+        hamming(0, [], []),
+        \+hamming(1, [], [])
+    )),
+
+    test('words in the same length', (
+        hamming(_, [a], [a]),
+        hamming(_, [a, b], [a, b]),
+        \+hamming(_, [a], [a, b])
+    )).
 
 % run tests on compile
 :- test.
