@@ -129,6 +129,10 @@ reverse_complement(N, Word1, Word2) :-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % is_dna
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% checkAllForPercentage
+
 % base case
 checkAllForPercentage(_, []).
 
@@ -136,6 +140,9 @@ checkAllForPercentage(_, []).
 checkAllForPercentage(N, [H | T]) :-
     percentage(N, H),
     checkAllForPercentage(N, T).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% checkAllForHammingDistance
 
 % IMPORTANT note - hamming(N, W1, W2) == hamming(N, W2, W1)
 % base cases
@@ -151,8 +158,30 @@ checkAllForHammingDistance(N, [H | T]) :-
     checkAllForHammingDistance(N, H, T),    % check hamming distance H and all of the elements in the tail T
     checkAllForHammingDistance(N, T).       % recursivly apply between each element in the tail and those that follow it in the list
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% checkAllForReverseComplement
+
+% base cases
+checkAllForReverseComplement(_, _, []).
+
+% check hamming distance between H1 and all of the elements in the list
+checkAllForReverseComplement(N, H1, [H2 | T]) :-
+    reverse_complement(N, H1, H2),
+    checkAllForReverseComplement(N, H1, T).
+
+checkAllForReverseComplement(_, []).
+checkAllForReverseComplement(N, [H | T]) :-
+    checkAllForReverseComplement(N, H, T),    % check hamming distance H and all of the elements in the tail T
+    checkAllForReverseComplement(N, T).       % recursivly apply between each element in the tail and those that follow it in the list
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% is_dna
 
 
 is_dna(N, M, Words) :-
     count(Words, M),        % verify M lists
-    checkAllForHammingDistance(N, Words).
+    checkAllForPercentage(N, Words),
+    checkAllForHammingDistance(N, Words),
+    checkAllForReverseComplement(N, Words), % checks only half of the combinations since every word be W1 and W2 (the operation is not associative)
+    reverse(Words, WordsR, []),
+    checkAllForReverseComplement(N, WordsR).% check the other half of Words
