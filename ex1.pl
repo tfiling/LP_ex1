@@ -1,35 +1,70 @@
-countcandg('C').
-countcandg('G').
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% percentage
 
+countCandG('C').
+countCandG('G').
+
+isEven(N) :-
+    A is ceiling(N / 2),
+    B is floor(N / 2),
+    A == B. % both floor an ceiling returned the same value on division by 2 -> N modulo 2 is 0 and N is even
+
+% base case
+percentageInner(0, []).
+
+% head is C or G
+percentageInner(N, [H | T]) :-
+    countCandG(H),          % head is C/G
+    Y is N - 1,             % counted one more C/G, decrease the C/G counter
+    percentageInner(Y, T).  % keep counting C/G on the list's tail
+
+% head is not C or G
+percentageInner(N, [H | T]) :-
+    \+ countCandG(H),       % head is not C/G
+    percentageInner(N, T).  % keep counting in the tail
+
+% attend floor of the n / 2 division 
+ percentageInnerFloorN(N, Word) :-
+    Floor is floor(N / 2),          % calculate the floor of N / 2
+    percentageInner(Floor, Word).   % true if Word has Floor appearances of C/G
+
+% attend Ceiling of the n / 2 division
+ percentageInnerCeilingN(N, Word) :-
+    Ceiling is ceiling(N / 2),      % calculate the ceiling of N / 2
+    percentageInner(Ceiling, Word). % true if word has Ceiling appearances of C/G
+
+% since N is odd, floor(N/2) \== ceiling(N/2) and we should check if true for both
+% important note - [floor(N/2), ceiling(N/2)] can have either 1 or two integers
+% check percentage for floor(N/2)
+percentageInnerNOdd(N, Word) :-
+    percentageInnerFloorN(N, Word).
+
+% check percentage for ceiling(N/2)
+percentageInnerNOdd(N, Word) :-
+    percentageInnerCeilingN(N, Word).
+
+percentage(N, Word) :-
+    isEven(N),                  % true if N is even
+    Z is N / 2,                 % calculate N / 2 (result is integer)
+    percentageInner(Z, Word).   % check percentage (has only one value to check)
+
+percentage(N, Word) :-
+    \+isEven(N),                    % true if N is odd
+    percentageInnerNOdd(N, Word).   % check pecentage for both floor(N/2) and ceiling(N/2)
+                                    % by overloading percentageInnerNOdd - can be true only for one of the values
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% hamming distance
+
+% count elements in the list
+% base case - empty list
 count([], 0).
-count([H|T], N) :-
-	count(T, Y),
-    countcandg(H),
-    N is Y+1,
-    N > 0.
-count([_|T], Y) :-
-    count(T, Y).
-
-percentage(N, [H|T]) :- 
-	percentage(N, Z, [H|T]).
-
-percentage(N, Z, [H|T]) :- 
-	Z is N//2,
-	count([H|T], N),
-	N > floor(Z), 
-	N < ceiling(Z).
-
-
-
-% gal: proposal for count function that counts the size of a list
-count([], 0).
+% increase counter and continue counting the list's tail
 count([_|T], N) :-
 	count(T, Y),
     N is Y+1,
     N > 0.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% hamming distance
 
 % true if both words has length of N
 count(N, Word1, Word2) :-
