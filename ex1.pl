@@ -124,3 +124,35 @@ reverse_complement(N, Word1, Word2) :-
     replaceWord(Word2, Word2C),     % apply the replacements converting Word2 to become W2^C
     hamming(N, Word1R, Word2C).     % check for hamming distance as part of reverse complement's definition
 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% is_dna
+
+% base case
+checkAllForPercentage(_, []).
+
+% recursive list iterator checking for percentage on every word in the list
+checkAllForPercentage(N, [H | T]) :-
+    percentage(N, H),
+    checkAllForPercentage(N, T).
+
+% IMPORTANT note - hamming(N, W1, W2) == hamming(N, W2, W1)
+% base cases
+checkAllForHammingDistance(_, _, []).
+
+% check hamming distance between H1 and all of the elements in the list
+checkAllForHammingDistance(N, H1, [H2 | T]) :-
+    hamming(N, H1, H2),
+    checkAllForHammingDistance(N, H1, T).
+
+checkAllForHammingDistance(_, []).
+checkAllForHammingDistance(N, [H | T]) :-
+    checkAllForHammingDistance(N, H, T),    % check hamming distance H and all of the elements in the tail T
+    checkAllForHammingDistance(N, T).       % recursivly apply between each element in the tail and those that follow it in the list
+
+
+
+is_dna(N, M, Words) :-
+    count(Words, M),        % verify M lists
+    checkAllForHammingDistance(N, Words).
