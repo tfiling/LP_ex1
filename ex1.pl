@@ -185,3 +185,16 @@ is_dna(N, M, Words) :-
     checkAllForReverseComplement(N, Words), % checks only half of the combinations since every word be W1 and W2 (the operation is not associative)
     reverse(Words, WordsR, []),
     checkAllForReverseComplement(N, WordsR).% check the other half of Words
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% dna_word
+
+dna_word(N, Word) :-
+    length(Word, N),   %make Word be of length N
+    dna_word(Word),
+    is_dna(N, 1, [Word]). %is_dna gets list of lists (Words parameter) so put Word into list and check it on a list of length 1 (M parameter)
+dna_word([X|Xs]) :-
+    member(X, ['A','C','G','T']),
+    dna_word(Xs).
+dna_word([]).
+
