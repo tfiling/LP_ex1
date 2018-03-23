@@ -189,12 +189,37 @@ is_dna(N, M, Words) :-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % dna_word
 
-dna_word(N, Word) :-
-    length(Word, N),   %make Word be of length N
-    dna_word(Word),
-    is_dna(N, 1, [Word]). %is_dna gets list of lists (Words parameter) so put Word into list and check it on a list of length 1 (M parameter)
-dna_word([X|Xs]) :-
-    member(X, ['A','C','G','T']),
-    dna_word(Xs).
-dna_word([]).
+% dna_word(N, Word) :-
+%     length(Word, N),   %make Word be of length N
+%     dna_word(Word),
+%     is_dna(N, 1, [Word]). %is_dna gets list of lists (Words parameter) so put Word into list and check it on a list of length 1 (M parameter)
+% dna_word([X|Xs]) :-
+%     member(X, ['A','C','G','T']),
+%     dna_word(Xs).
+% dna_word([]).
 
+% base case
+possibleDnaPerm(0, Perm, Perm).
+
+possibleDnaPerm(N, Acc, Perm) :-
+    N > 0,
+    N1 is N - 1,
+    possibleDnaPerm(N1, ['A' | Acc], Perm).
+
+possibleDnaPerm(N, Acc, Perm) :-
+    N > 0,
+    N1 is N - 1,
+    possibleDnaPerm(N1, ['C' | Acc], Perm).
+
+possibleDnaPerm(N, Acc, Perm) :-
+    N > 0,
+    N1 is N - 1,
+    possibleDnaPerm(N1, ['G' | Acc], Perm).
+
+possibleDnaPerm(N, Acc, Perm) :-
+    N > 0,
+    N1 is N - 1,
+    possibleDnaPerm(N1, ['T' | Acc], Perm).
+
+dna_word(N, Word) :-
+    possibleDnaPerm(N, [], Word).
