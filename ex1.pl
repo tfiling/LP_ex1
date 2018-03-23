@@ -191,10 +191,44 @@ is_dna(N, M, Words) :-
 
 dna_word(N, Word) :-
     length(Word, N),   %make Word be of length N
-    dna_word(Word),
+    acgt_word(Word),
     is_dna(N, 1, [Word]). %is_dna gets list of lists (Words parameter) so put Word into list and check it on a list of length 1 (M parameter)
-dna_word([X|Xs]) :-
+acgt_word([X|Xs]) :- %create word comprised of ACGT chars
     member(X, ['A','C','G','T']),
-    dna_word(Xs).
-dna_word([]).
+    acgt_word(Xs).
+acgt_word([]).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% random_dna_word
+
+% add_element_to_list(ELEMENT, LIST_IN, LIST_OUT)
+%add_element_to_list(E, L, L) :-
+%    member(E, L).
+%add_element_to_list(E, L, [E|L]).
+
+%create_list_of_dna_words(N, [H|T]) :-
+%    add_element_to_list(H, T, T),
+%    dna_word(N, Word, T),
+%    append([], [Word|T], T),
+%    create_list_of_dna_words(N, T).
+
+%create_list_of_dna_words(N, []) :- %initial call
+%    dna_word(N, Word),
+%    append([], [Word], Xs),
+%    create_list_of_dna_words(N, Xs).
+
+create_list_of_acgt_words(N, Dnawords) :-
+    length(Word, N),
+    acgt_word(Word),
+
+create_list_of_acgt_words(N, Dnawords) :-
+    length(Word, N),
+    acgt_word(Word),
+    
+
+random_dna_word(N, Word) :-
+    create_list_of_dna_words(N, Dnawords),
+    random_permutation(Dnawords, Word).
+
+
 
