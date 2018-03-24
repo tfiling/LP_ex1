@@ -189,46 +189,68 @@ is_dna(N, M, Words) :-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % dna_word
 
+ dna_word(N, Word) :-
+     length(Word, N),   %make Word be of length N
+     possible_dna_word(Word),
+     is_dna(N, 1, [Word]). %is_dna gets list of lists (Words parameter) so put Word into list and check it on a list of length 1 (M parameter)
+ possible_dna_word([X|Xs]) :-
+     member(X, ['A','C','G','T']),
+     dna_word(Xs).
+ possible_dna_word([]).
+
+/* gal's method
+% base case
+possibleDnaPerm(0, Perm, Perm).
+
+possibleDnaPerm(N, Acc, Perm) :-
+    N > 0,
+    N1 is N - 1,
+    possibleDnaPerm(N1, ['A' | Acc], Perm).
+
+possibleDnaPerm(N, Acc, Perm) :-
+    N > 0,
+    N1 is N - 1,
+    possibleDnaPerm(N1, ['C' | Acc], Perm).
+
+possibleDnaPerm(N, Acc, Perm) :-
+    N > 0,
+    N1 is N - 1,
+    possibleDnaPerm(N1, ['G' | Acc], Perm).
+
+possibleDnaPerm(N, Acc, Perm) :-
+    N > 0,
+    N1 is N - 1,
+    possibleDnaPerm(N1, ['T' | Acc], Perm).
+
 dna_word(N, Word) :-
-    length(Word, N),   %make Word be of length N
-    acgt_word(Word),
-    is_dna(N, 1, [Word]). %is_dna gets list of lists (Words parameter) so put Word into list and check it on a list of length 1 (M parameter)
-acgt_word([X|Xs]) :- %create word comprised of ACGT chars
-    member(X, ['A','C','G','T']),
-    acgt_word(Xs).
-acgt_word([]).
+    possibleDnaPerm(N, [], Word).
+    */
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % random_dna_word
 
-% add_element_to_list(ELEMENT, LIST_IN, LIST_OUT)
-%add_element_to_list(E, L, L) :-
-%    member(E, L).
-%add_element_to_list(E, L, [E|L]).
-
-%create_list_of_dna_words(N, [H|T]) :-
-%    add_element_to_list(H, T, T),
-%    dna_word(N, Word, T),
-%    append([], [Word|T], T),
-%    create_list_of_dna_words(N, T).
-
-%create_list_of_dna_words(N, []) :- %initial call
-%    dna_word(N, Word),
-%    append([], [Word], Xs),
-%    create_list_of_dna_words(N, Xs).
-
-create_list_of_acgt_words(N, Dnawords) :-
-    length(Word, N),
-    acgt_word(Word),
-
-create_list_of_acgt_words(N, Dnawords) :-
-    length(Word, N),
-    acgt_word(Word),
-    
-
 random_dna_word(N, Word) :-
-    create_list_of_dna_words(N, Dnawords),
-    random_permutation(Dnawords, Word).
+    list_of_all_acgt_permutations(N, AllDNAWords),
+    random_permutation(AllDNAWords, RandomOrder),
+    member(Word, RandomOrder).
 
+list_of_all_acgt_permutations(N, AllPerms) :-
+    list_of_all_acgt_permutations(N, [['A'], ['C'], ['G'], ['T']], [], AllPerms).
 
+list_of_all_acgt_permutations(N, [H|T], BuildList, AllPerms) :-
+    N > 1,
+    append(['A'], H, L1),
+    append(['C'], H, L2),
+    append(['G'], H, L3),
+    append(['T'], H, L4), %create all possible combinations of ACGT words
+    list_of_all_acgt_permutations(N, T, [L1, L2, L3, L4|BuildList], AllPerms). %add created combinations to list already built 
 
+list_of_all_acgt_permutations(N, [], BuildList, AllPerms) :-  %finished going throw all chars in [['A'], ['C'], ['G'], ['T']]
+    N > 1,
+    N1 is N - 1,
+    list_of_all_acgt_permutations(N1, BuildList, [], AllPerms).
+
+%stop condition when the above function reaches N=1
+list_of_all_acgt_permutations(N, FinishedList, [], AllPerms) :-  
+    N = 1, 
+    FinishedList = AllPerms.

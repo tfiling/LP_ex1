@@ -53,3 +53,6 @@ testIs_dna :-
     (is_dna(N, M, Ws) -> writeln(I: ok);writeln(I: failed)),
     fail.
 testIs_dna.
+
+
+:- testCheckAllForPercentage, testCheckAllForReverseComplement, testIs_dna.
