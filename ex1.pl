@@ -248,3 +248,21 @@ list_of_all_acgt_permutations(N, [H|T], BuildList, AllPerms) :-
 %stop condition when iterated over all ACGT chars and therefore list is empty
 list_of_all_acgt_permutations(_, [], BuildList, AllPerms) :-  %finished going throw all chars in [['A'], ['C'], ['G'], ['T']]
     BuildList = AllPerms.
+ 
+%%%%%%%%%%%%%%%%%%
+% increment
+
+%since Words is assumed to be a legal DNA Solution, we need to check that Word is a legal DNA Word solution.
+increment(Words, Word, N) :-
+    is_dna(N, 1, [Word]), %check that Word is legal DNA Solution
+    not_member(Word, Words). %check that word is not a member in Words
+
+/*
+example: not_member(['A'],[['A'],['B']]). false
+example: not_member(['A'],[['C'],['B']]). true 
+*/
+not_member(Word, [WordInList|List]) :-
+    Word \== WordInList,
+    not_member(Word, List).
+
+not_member(_, []).
