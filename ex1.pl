@@ -238,7 +238,6 @@ list_of_all_acgt_permutations(N, AllPerms) :-
     list_of_all_acgt_permutations(N, [['A'], ['C'], ['G'], ['T']], [], AllPerms).
 
 list_of_all_acgt_permutations(N, [H|T], BuildList, AllPerms) :-
-    N > 1,
     append(['A'], H, L1),
     append(['C'], H, L2),
     append(['G'], H, L3),
