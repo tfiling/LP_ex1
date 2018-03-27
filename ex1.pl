@@ -195,7 +195,7 @@ is_dna(N, M, Words) :-
      is_dna(N, 1, [Word]). %is_dna gets list of lists (Words parameter) so put Word into list and check it on a list of length 1 (M parameter)
  possible_dna_word([X|Xs]) :-
      member(X, ['A','C','G','T']),
-     dna_word(Xs).
+     possible_dna_word(Xs).
  possible_dna_word([]).
 
 /* gal's method
@@ -265,3 +265,18 @@ not_member(Word, [WordInList|List]) :-
     not_member(Word, List).
 
 not_member(_, []).
+
+%%%%%%%%%%%%%%%%%%
+% dna
+
+dna(N, M, Words) :-
+    M > 0,
+    M1 is M - 1,
+    dna_word(N, Word),
+    dna(N, M1, [Word|Words]).
+
+dna(_, M, _) :-
+    M = 0.
+
+
+
