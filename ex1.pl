@@ -191,40 +191,13 @@ is_dna(N, M, Words) :-
 
  dna_word(N, Word) :-
      length(Word, N),   %make Word be of length N
-     possible_dna_word(Word),
-     is_dna(N, 1, [Word]). %is_dna gets list of lists (Words parameter) so put Word into list and check it on a list of length 1 (M parameter)
+     possible_dna_word(Word).
  possible_dna_word([X|Xs]) :-
      member(X, ['A','C','G','T']),
      possible_dna_word(Xs).
  possible_dna_word([]).
 
-/* gal's method
-% base case
-possibleDnaPerm(0, Perm, Perm).
 
-possibleDnaPerm(N, Acc, Perm) :-
-    N > 0,
-    N1 is N - 1,
-    possibleDnaPerm(N1, ['A' | Acc], Perm).
-
-possibleDnaPerm(N, Acc, Perm) :-
-    N > 0,
-    N1 is N - 1,
-    possibleDnaPerm(N1, ['C' | Acc], Perm).
-
-possibleDnaPerm(N, Acc, Perm) :-
-    N > 0,
-    N1 is N - 1,
-    possibleDnaPerm(N1, ['G' | Acc], Perm).
-
-possibleDnaPerm(N, Acc, Perm) :-
-    N > 0,
-    N1 is N - 1,
-    possibleDnaPerm(N1, ['T' | Acc], Perm).
-
-dna_word(N, Word) :-
-    possibleDnaPerm(N, [], Word).
-    */
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % random_dna_word
@@ -259,32 +232,45 @@ list_of_all_acgt_permutations(N, FinishedList, [], AllPerms) :-
 %%%%%%%%%%%%%%%%%%
 % increment
 
-%since Words is assumed to be a legal DNA Solution, we need to check that Word is a legal DNA Word solution.
 increment(Words, Word, N) :-
-    is_dna(N, 1, [Word]), %check that Word is legal DNA Solution
-    not_member(Word, Words). %check that word is not a member in Words
+    count(Words, Count),
+    NewCount is Count + 1,
+    is_dna(N, NewCount, [Word | Words]).
 
-/*
-example: not_member(['A'],[['A'],['B']]). false
-example: not_member(['A'],[['C'],['B']]). true 
-*/
-not_member(Word, [WordInList|List]) :-
-    Word \== WordInList,
-    not_member(Word, List).
-
-not_member(_, []).
-
-%%%%%%%%%%%%%%%%%%
-% dna
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Task 8
 
 dna(N, M, Words) :-
+    list_of_all_acgt_permutations(N, AllPerms),
+    appendDnaWords(N, M, AllPerms, [], Words).
+
+
+appendDnaWords(N, M, [H | T], Acc, Words) :-
     M > 0,
-    M1 is M - 1,
-    dna_word(N, Word),
-    dna(N, M1, [Word|Words]).
+    increment(Acc, H, N),
+    M2 is M - 1,
+    appendDnaWords(N, M2, T, [H | Acc], Words).
 
-dna(_, M, _) :-
-    M = 0.
+appendDnaWords(N, M, [_ | T], Acc, Words) :-
+    M > 0,
+    appendDnaWords(N, M, T, Acc, Words).
+
+appendDnaWords(_, 0, _, Words, Words).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Task 9
+
+random_dna(N, M, Words) :- 
+    list_of_all_acgt_permutations(N, AllPerms),
+    random_permutation(AllPerms, AllPermsRandomOrder),
+    appendDnaWords(N, M, AllPermsRandomOrder, [], Words).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Task 10
 
 
-
+dna
+% base case
+dna_subset(N, Words, Words) :-
+    Count(M, Words),
+    is_dna(N, M, Words).

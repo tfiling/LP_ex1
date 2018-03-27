@@ -46,13 +46,26 @@ testCheckAllForReverseComplement.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % is_dna tests
 
-test3(1, 8, 2, [['T','T','G','A','G','T','C','C'], ['A','G','T','T','T','G','C','G']]).
+test3(1, 8, 2, [['T','T','G','A','G','T','C','C'], ['A','G','T','T','T','G','C','G']], 1).
+test3(2, 8, 4, [['C','C','C','T','G','T','A','A'],
+                ['C','C','C','T','A','A','T','G'],
+                ['T','C','G','T','A','C','A','C'],
+                ['T','T','C','G','G','A','G','T']], 1).
+test3(3, 8, 6, [['T','T','G','A','G','T','C','C'],
+                ['A','G','T','T','T','G','C','G'],
+                ['G','T','G','T','C','G','T','G'],
+                ['T','C','T','T','C','G','T','G'],
+                ['A','A','A','G','C','C','C','T'],
+                ['T','T','A','T','G','G','G','G']], 0).
 
 testIs_dna :-
-    test3(I, N, M, Ws),
-    (is_dna(N, M, Ws) -> writeln(I: ok);writeln(I: failed)),
+    test3(I, N, M, Ws, ShouldPass),
+    (ShouldPass is 1 -> 
+        (is_dna(N, M, Ws) -> writeln(I: ok);writeln(I: failed)) ;
+        (is_dna(N, M, Ws) -> writeln(I: failed); writeln(I: ok))
+    ),
     fail.
-testIs_dna :- writeln('is_dna passed').
+testIs_dna.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % increment tests
