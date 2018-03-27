@@ -203,23 +203,25 @@ is_dna(N, M, Words) :-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% random_dna_word
+% Task 6 - random_dna_word
 
 random_dna_word(N, Word) :-
-    list_of_all_acgt_permutations(N, AllDNAWords),
-    random_permutation(AllDNAWords, RandomOrder),
-    member(Word, RandomOrder).
+    list_of_all_acgt_permutations(N, AllDNAWords),  % get all possible permutations
+    random_permutation(AllDNAWords, RandomOrder),   % generate a random order for the list containing all all possible permutations of DNA words
+    member(Word, RandomOrder).                      % set Word to be the first word in the random order DNA words list
 
+% a function with mode (+N, -AllPerms) - returns all possible permutations of of length N DNA words
 list_of_all_acgt_permutations(N, AllPerms) :-
     list_of_all_acgt_permutations(N, [['A'], ['C'], ['G'], ['T']], [], AllPerms).
 
+% append all 4 possible chars ,which creates 4 new lists.
 list_of_all_acgt_permutations(N, [H|T], BuildList, AllPerms) :-
     N > 1,
     append(['A'], H, L1),
     append(['C'], H, L2),
     append(['G'], H, L3),
     append(['T'], H, L4), %create all possible combinations of ACGT words
-    list_of_all_acgt_permutations(N, T, [L1, L2, L3, L4|BuildList], AllPerms). %add created combinations to list already built 
+    list_of_all_acgt_permutations(N, T, [L1, L2, L3, L4|BuildList], AllPerms). %add created combinations to list already built and keep applying recursively on the tail of posible permutations (T)
 
 list_of_all_acgt_permutations(N, [], BuildList, AllPerms) :-  %finished going throw all chars in [['A'], ['C'], ['G'], ['T']]
     N > 1,
@@ -233,47 +235,51 @@ list_of_all_acgt_permutations(N, FinishedList, [], AllPerms) :-
 
 
 %%%%%%%%%%%%%%%%%%
-% increment
+% task 7 - increment
 
 increment(Words, Word, N) :-
-    count(Words, Count),
-    NewCount is Count + 1,
-    is_dna(N, NewCount, [Word | Words]).
+    count(Words, Count),                    % count how many words in Words
+    NewCount is Count + 1,                  % increament the above count
+    is_dna(N, NewCount, [Word | Words]).    % check if the new list created from appending Word fulfills the is_dna property
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Task 8
+% Task 8 - dna
 
 dna(N, M, Words) :-
-    list_of_all_acgt_permutations(N, AllPerms),
-    appendDnaWords(N, M, AllPerms, [], Words).
+    list_of_all_acgt_permutations(N, AllPerms), % generate all possible words of length N
+    appendDnaWords(N, M, AllPerms, [], Words).  % append togather M of those words as long as each newly appended word dosnt break the fulfillment of is_dna by the existing list
 
+% (+N, +M, +List, +Acc, -Words) - iterates the words in List and on every iteration appends the first word, 
+% to Acc if and only if it wont break the fulfillment of is_dna property by Acc.
+% in total M words will be added this way
+appendDnaWords(N, M, [H | T], Acc, Words) :-
+    M > 0,                  % make sure a new word should be added
+    increment(Acc, H, N),   % add the word, true if the word added successfully while keeping the fulfilment of is_dna property
+    M2 is M - 1,            
+    appendDnaWords(N, M2, T, [H | Acc], Words). % a word was added so apply the recursive call with the new accumulator and M-1 words left to be added
 
 appendDnaWords(N, M, [H | T], Acc, Words) :-
     M > 0,
-    increment(Acc, H, N),
-    M2 is M - 1,
-    appendDnaWords(N, M2, T, [H | Acc], Words).
+    \+increment(Acc, H, N),             % the new word breaks the is_dna predicate and therefor wont be added to the list
+    appendDnaWords(N, M, T, Acc, Words).% recusively try the next word
 
-appendDnaWords(N, M, [_ | T], Acc, Words) :-
-    M > 0,
-    appendDnaWords(N, M, T, Acc, Words).
-
-appendDnaWords(_, 0, _, Words, Words).
+appendDnaWords(_, 0, _, Words, Words).  % base case for the function, setting the accumulator to be the resulted Words
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Task 9
+% Task 9 - random_dna
 
 random_dna(N, M, Words) :- 
-    list_of_all_acgt_permutations(N, AllPerms),
-    random_permutation(AllPerms, AllPermsRandomOrder),
-    appendDnaWords(N, M, AllPermsRandomOrder, [], Words).
+    list_of_all_acgt_permutations(N, AllPerms),             % generate all possible Words of length
+    random_permutation(AllPerms, AllPermsRandomOrder),      % shuffle the order of the resulted AllPerms word list
+    appendDnaWords(N, M, AllPermsRandomOrder, [], Words).   % use the helper function from Task 8 to append the words in the shuffled order 
+                                                            % - this will result a different Word list on every invocation of random_dna
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Task 10
 
 
-dna
-% base case
-dna_subset(N, Words, Words) :-
-    Count(M, Words),
-    is_dna(N, M, Words).
+
+% % base case
+% dna_subset(N, Words, Words) :-
+%     Count(M, Words),
+%     is_dna(N, M, Words).
