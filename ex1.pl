@@ -247,15 +247,15 @@ list_of_all_acgt_permutations(N, [H|T], BuildList, AllPerms) :-
 
 list_of_all_acgt_permutations(N, [], BuildList, AllPerms) :-  %finished going throw all chars in [['A'], ['C'], ['G'], ['T']]
     N > 1,
-    N1 is N - 1,
+    N1 is N - 1, %need this inorder to get all of the combinations of DNA words for length N
     list_of_all_acgt_permutations(N1, BuildList, [], AllPerms).
 
 %stop condition when the above function reaches N=1
 list_of_all_acgt_permutations(N, FinishedList, [], AllPerms) :-  
-    N = 1, 
+    N = 1, %DNA words are now of length N that we received from the input of the function random_dna_word 
     FinishedList = AllPerms.
-    
-     
+
+
 %%%%%%%%%%%%%%%%%%
 % increment
 
