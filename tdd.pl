@@ -52,7 +52,40 @@ testIs_dna :-
     test3(I, N, M, Ws),
     (is_dna(N, M, Ws) -> writeln(I: ok);writeln(I: failed)),
     fail.
-testIs_dna.
+testIs_dna :- writeln('is_dna passed').
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% increment tests
+
+test4(1,    [['G','G','T','G','A','A','T','G'],
+            ['G','A','A','C','A','T','G','C'],
+            ['C','C','C','T','A','C','A','T']],
+
+            ['T','A','T','C','A','G','G','G'],
+             8, 
+             1).
+
+test4(2,    [['T','T','G','A','G','T','C','C'],
+            ['A','G','T','T','T','G','C','G'],
+            ['G','T','G','T','C','G','T','G'],
+            ['A','A','A','G','C','C','C','T'],
+            ['T','T','A','T','G','G','G','G']],
+
+             ['T','C','T','T','C','G','T','G'],
+             8, 
+             0).
+
+testIncrement :-
+    test4(I, Ws, W, N, ShouldPass),
+    (ShouldPass is 1 -> 
+        (increment(Ws, W, N) -> writeln(I: ok);writeln(I: failed)) ;
+        (increment(Ws, W, N) -> writeln(I: failed); writeln(I: ok))
+    ),
+    fail.
+testIncrement.
 
 
-:- testCheckAllForPercentage, testCheckAllForReverseComplement, testIs_dna.
+
+
+
+:- testCheckAllForPercentage, testCheckAllForReverseComplement, testIs_dna, testIncrement.
