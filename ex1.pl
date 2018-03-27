@@ -195,7 +195,7 @@ is_dna(N, M, Words) :-
      is_dna(N, 1, [Word]). %is_dna gets list of lists (Words parameter) so put Word into list and check it on a list of length 1 (M parameter)
  possible_dna_word([X|Xs]) :-
      member(X, ['A','C','G','T']),
-     dna_word(Xs).
+     possible_dna_word(Xs).
  possible_dna_word([]).
 
 /* gal's method
@@ -238,16 +238,24 @@ list_of_all_acgt_permutations(N, AllPerms) :-
     list_of_all_acgt_permutations(N, [['A'], ['C'], ['G'], ['T']], [], AllPerms).
 
 list_of_all_acgt_permutations(N, [H|T], BuildList, AllPerms) :-
+    N > 1,
     append(['A'], H, L1),
     append(['C'], H, L2),
     append(['G'], H, L3),
     append(['T'], H, L4), %create all possible combinations of ACGT words
     list_of_all_acgt_permutations(N, T, [L1, L2, L3, L4|BuildList], AllPerms). %add created combinations to list already built 
 
-%stop condition when iterated over all ACGT chars and therefore list is empty
-list_of_all_acgt_permutations(_, [], BuildList, AllPerms) :-  %finished going throw all chars in [['A'], ['C'], ['G'], ['T']]
-    BuildList = AllPerms.
- 
+list_of_all_acgt_permutations(N, [], BuildList, AllPerms) :-  %finished going throw all chars in [['A'], ['C'], ['G'], ['T']]
+    N > 1,
+    N1 is N - 1, %need this inorder to get all of the combinations of DNA words for length N
+    list_of_all_acgt_permutations(N1, BuildList, [], AllPerms).
+
+%stop condition when the above function reaches N=1
+list_of_all_acgt_permutations(N, FinishedList, [], AllPerms) :-  
+    N = 1, %DNA words are now of length N that we received from the input of the function random_dna_word 
+    FinishedList = AllPerms.
+
+
 %%%%%%%%%%%%%%%%%%
 % increment
 
@@ -265,3 +273,18 @@ not_member(Word, [WordInList|List]) :-
     not_member(Word, List).
 
 not_member(_, []).
+
+%%%%%%%%%%%%%%%%%%
+% dna
+
+dna(N, M, Words) :-
+    M > 0,
+    M1 is M - 1,
+    dna_word(N, Word),
+    dna(N, M1, [Word|Words]).
+
+dna(_, M, _) :-
+    M = 0.
+
+
+
