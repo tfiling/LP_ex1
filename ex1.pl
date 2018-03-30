@@ -1,3 +1,5 @@
+% Gal Tfilin and Niv Lipetz
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Task 1 - percentage
 
@@ -221,16 +223,16 @@ list_of_all_acgt_permutations(N, [H|T], BuildList, AllPerms) :-
     append(['C'], H, L2),
     append(['G'], H, L3),
     append(['T'], H, L4), %create all possible combinations of ACGT words
-    list_of_all_acgt_permutations(N, T, [L1, L2, L3, L4|BuildList], AllPerms). %add created combinations to list already built and keep applying recursively on the tail of posible permutations (T)
+    list_of_all_acgt_permutations(N, T, [L1, L2, L3, L4|BuildList], AllPerms).  %add created combinations to list already built and keep applying recursively on the tail of posible permutations (T)
 
-list_of_all_acgt_permutations(N, [], BuildList, AllPerms) :-  %finished going throw all chars in [['A'], ['C'], ['G'], ['T']]
+list_of_all_acgt_permutations(N, [], BuildList, AllPerms) :-                    %finished going throw all chars in [['A'], ['C'], ['G'], ['T']]
     N > 1,
-    N1 is N - 1, %need this inorder to get all of the combinations of DNA words for length N
+    N1 is N - 1,                                                                %need this inorder to get all of the combinations of DNA words for length N
     list_of_all_acgt_permutations(N1, BuildList, [], AllPerms).
 
 %stop condition when the above function reaches N=1
 list_of_all_acgt_permutations(N, FinishedList, [], AllPerms) :-  
-    N = 1, %DNA words are now of length N that we received from the input of the function random_dna_word 
+    N = 1,                                                                      %DNA words are now of length N that we received from the input of the function random_dna_word 
     FinishedList = AllPerms.
 
 
@@ -284,20 +286,12 @@ random_dna(N, M, Words) :-
 dna_subset(N, Words, Subset) :-
     dna_subset(N, Words, [], Subset).
 
-<<<<<<< HEAD
 dna_subset(N, [H|T], Acc, Subset) :-
     increment(Acc, H, N),
-    dna_subset(N, T, [H|Acc], Subset).  %if can insert Word to Acc, then insert it to Acc
+    dna_subset(N, T, [H|Acc], Subset).          %if can insert Word to Acc, then insert it to Acc
 
-dna_subset(N, [_|T], Acc, Subset) :-  %case were can't insert Word to Acc
+dna_subset(N, [_|T], Acc, Subset) :-            %case were can't insert Word to Acc
     dna_subset(N, T, Acc, Subset).
 
 dna_subset(_, [], Acc, Subset) :-
     Acc = Subset.
-=======
-
-% % base case
-% dna_subset(N, Words, Words) :-
-%     Count(M, Words),
-%     is_dna(N, M, Words).
->>>>>>> d3844a59f4f551bd2004774b990d7e0b1f076a90
