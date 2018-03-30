@@ -1,9 +1,10 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% percentage
+% Task 1 - percentage
 
 countCandG('C').
 countCandG('G').
 
+% checks if N is an even number
 isEven(N) :-
     A is ceiling(N / 2),
     B is floor(N / 2),
@@ -54,7 +55,7 @@ percentage(N, Word) :-
                                     % by overloading percentageInnerNOdd - can be true only for one of the values
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% hamming distance
+% Task 2 - hamming distance
 
 % count elements in the list
 % base case - empty list
@@ -74,7 +75,7 @@ count(N, Word1, Word2) :-
 % base case - anything has hamming distance of at lease 0
 innerHamming(0, _, _).
 
-% a case where the head is identical
+% a case where the heads is identical
 innerHamming(N, [H1 | T1], [H2 | T2]) :-
     H1 == H2,
     innerHamming(N, T1, T2).
@@ -87,22 +88,24 @@ innerHamming(N, [H1 | T1], [H2 | T2]) :-
 
 % the actual function
 hamming(N, Word1, Word2) :-
-    count(N, Word1, Word2),
+    count(N, Word1, Word2),         % make sure both words are of length N
     Z is N / 2,                     
     innerHamming(Z, Word1, Word2).  % look for at least N / 2 chars that are different
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% reverse_complement
+% task 3 - reverse_complement
 
-% copied from https://stackoverflow.com/questions/19471778/reversing-a-list-in-prolog
+% reverse(X, Y, Z) written in mode (+, -, +) - reverses X and places the result in Y
+% reverse was copied from https://stackoverflow.com/questions/19471778/reversing-a-list-in-prolog
 % reverse function's base case
 reverse([],Z,Z).
 
 % push back the head to the accumulator
 reverse([H|T],Z,Acc) :- reverse(T,Z,[H|Acc]).
 
-% took insparation from https://stackoverflow.com/questions/5850937/prolog-element-in-lists-replacement
+% replace(A, B, C, D) in mode (+, +, +, -) replaces any occurance of A with B and B with A in list C
+% when impementing replace, took insparation from https://stackoverflow.com/questions/5850937/prolog-element-in-lists-replacement
 % base case - empty lists apply the replacement
 replace(_, _, [], []).
 
@@ -115,8 +118,8 @@ replace(O, R, [H|T], [H|T2]) :- H \= O, H \= R, replace(O, R, T, T2).
 
 % apply the replacement required for the transition from W to W^C
 replaceWord(Word, WordC) :-
-    replace('A', 'T', Word, Tmp),
-    replace('C', 'G', Tmp, WordC).
+    replace('A', 'T', Word, Tmp),   % 1st step - relpace all 'A' with 'T' and vice versa
+    replace('C', 'G', Tmp, WordC).  % 2nd step - replace all 'C' with 'G' and vice versa, where the result would be WordC
 
 
 reverse_complement(N, Word1, Word2) :-
@@ -125,13 +128,12 @@ reverse_complement(N, Word1, Word2) :-
     hamming(N, Word1R, Word2C).     % check for hamming distance as part of reverse complement's definition
 
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% is_dna
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Task 4 - is_dna (helper function)
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% checkAllForPercentage
+% checkAllForPercentage(A, B) with mode (+, +) - A is the length of all words in B, true if all words fulfill percentage
 
 % base case
 checkAllForPercentage(_, []).
@@ -142,16 +144,16 @@ checkAllForPercentage(N, [H | T]) :-
     checkAllForPercentage(N, T).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% checkAllForHammingDistance
+% checkAllForHammingDistance(A, B) with mode (+, +) - A is the length of all words in B, true if all possible pairs of words fulfill hamming distance property
 
-% IMPORTANT note - hamming(N, W1, W2) == hamming(N, W2, W1)
+% IMPORTANT - additional explenation in the attached pdf file
 % base cases
 checkAllForHammingDistance(_, _, []).
 
 % check hamming distance between H1 and all of the elements in the list
 checkAllForHammingDistance(N, H1, [H2 | T]) :-
-    hamming(N, H1, H2),
-    checkAllForHammingDistance(N, H1, T).
+    hamming(N, H1, H2),                     % actual hamming comparison
+    checkAllForHammingDistance(N, H1, T).   % recursive call to apply the comparison between H1 and the rest of the elements in the list
 
 checkAllForHammingDistance(_, []).
 checkAllForHammingDistance(N, [H | T]) :-
@@ -159,7 +161,7 @@ checkAllForHammingDistance(N, [H | T]) :-
     checkAllForHammingDistance(N, T).       % recursivly apply between each element in the tail and those that follow it in the list
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% checkAllForReverseComplement
+% checkAllForReverseComplement(A, B) with mode (+, +) - A is the length of all words in B, true if all possible pairs of words fulfill reverse compellant property
 
 % base cases
 checkAllForReverseComplement(_, _, []).
@@ -175,48 +177,51 @@ checkAllForReverseComplement(N, [H | T]) :-
     checkAllForReverseComplement(N, T).       % recursivly apply between each element in the tail and those that follow it in the list
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% is_dna
+% Task 4 - is_dna
 
 
 is_dna(N, M, Words) :-
-    count(Words, M),        % verify M lists
+    count(Words, M),                        % verify M lists
     checkAllForPercentage(N, Words),
     checkAllForHammingDistance(N, Words),
     checkAllForReverseComplement(N, Words), % checks only half of the combinations since every word be W1 and W2 (the operation is not associative)
-    reverse(Words, WordsR, []),
+    reverse(Words, WordsR, []),             % reverse Words
     checkAllForReverseComplement(N, WordsR).% check the other half of Words
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% dna_word
+% task 5 - dna_word
 
  dna_word(N, Word) :-
-     length(Word, N),   %make Word be of length N
-     possible_dna_word(Word).
+     length(Word, N),           % make Word be of length N
+     possible_dna_word(Word).   
+
  possible_dna_word([X|Xs]) :-
-     member(X, ['A','C','G','T']),
-     possible_dna_word(Xs).
- possible_dna_word([]).
+     member(X, ['A','C','G','T']),  % set the first char to be one of the DNA chars
+     possible_dna_word(Xs).         % apply recursivly for the rest of the Word
+ possible_dna_word([]).             % case base
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% random_dna_word
+% Task 6 - random_dna_word
 
 random_dna_word(N, Word) :-
-    list_of_all_acgt_permutations(N, AllDNAWords),
-    random_permutation(AllDNAWords, RandomOrder),
-    member(Word, RandomOrder).
+    list_of_all_acgt_permutations(N, AllDNAWords),  % get all possible permutations
+    random_permutation(AllDNAWords, RandomOrder),   % generate a random order for the list containing all all possible permutations of DNA words
+    member(Word, RandomOrder).                      % set Word to be the first word in the random order DNA words list
 
+% a function with mode (+N, -AllPerms) - returns all possible permutations of of length N DNA words
 list_of_all_acgt_permutations(N, AllPerms) :-
     list_of_all_acgt_permutations(N, [['A'], ['C'], ['G'], ['T']], [], AllPerms).
 
+% append all 4 possible chars ,which creates 4 new lists.
 list_of_all_acgt_permutations(N, [H|T], BuildList, AllPerms) :-
     N > 1,
     append(['A'], H, L1),
     append(['C'], H, L2),
     append(['G'], H, L3),
     append(['T'], H, L4), %create all possible combinations of ACGT words
-    list_of_all_acgt_permutations(N, T, [L1, L2, L3, L4|BuildList], AllPerms). %add created combinations to list already built 
+    list_of_all_acgt_permutations(N, T, [L1, L2, L3, L4|BuildList], AllPerms). %add created combinations to list already built and keep applying recursively on the tail of posible permutations (T)
 
 list_of_all_acgt_permutations(N, [], BuildList, AllPerms) :-  %finished going throw all chars in [['A'], ['C'], ['G'], ['T']]
     N > 1,
@@ -230,44 +235,48 @@ list_of_all_acgt_permutations(N, FinishedList, [], AllPerms) :-
 
 
 %%%%%%%%%%%%%%%%%%
-% increment
+% task 7 - increment
 
 increment(Words, Word, N) :-
-    count(Words, Count),
-    NewCount is Count + 1,
-    is_dna(N, NewCount, [Word | Words]).
+    count(Words, Count),                    % count how many words in Words
+    NewCount is Count + 1,                  % increament the above count
+    is_dna(N, NewCount, [Word | Words]).    % check if the new list created from appending Word fulfills the is_dna property
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Task 8
+% Task 8 - dna
 
 dna(N, M, Words) :-
-    list_of_all_acgt_permutations(N, AllPerms),
-    appendDnaWords(N, M, AllPerms, [], Words).
+    list_of_all_acgt_permutations(N, AllPerms), % generate all possible words of length N
+    appendDnaWords(N, M, AllPerms, [], Words).  % append togather M of those words as long as each newly appended word dosnt break the fulfillment of is_dna by the existing list
 
+% (+N, +M, +List, +Acc, -Words) - iterates the words in List and on every iteration appends the first word, 
+% to Acc if and only if it wont break the fulfillment of is_dna property by Acc.
+% in total M words will be added this way
+appendDnaWords(N, M, [H | T], Acc, Words) :-
+    M > 0,                  % make sure a new word should be added
+    increment(Acc, H, N),   % add the word, true if the word added successfully while keeping the fulfilment of is_dna property
+    M2 is M - 1,            
+    appendDnaWords(N, M2, T, [H | Acc], Words). % a word was added so apply the recursive call with the new accumulator and M-1 words left to be added
 
 appendDnaWords(N, M, [H | T], Acc, Words) :-
     M > 0,
-    increment(Acc, H, N),
-    M2 is M - 1,
-    appendDnaWords(N, M2, T, [H | Acc], Words).
+    \+increment(Acc, H, N),             % the new word breaks the is_dna predicate and therefor wont be added to the list
+    appendDnaWords(N, M, T, Acc, Words).% recusively try the next word
 
-appendDnaWords(N, M, [_ | T], Acc, Words) :-
-    M > 0,
-    appendDnaWords(N, M, T, Acc, Words).
-
-appendDnaWords(_, 0, _, Words, Words).
+appendDnaWords(_, 0, _, Words, Words).  % base case for the function, setting the accumulator to be the resulted Words
 
 appendDnaWords(_, 0, _, Words, _) :-
     writeln(Words),
     fail.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Task 9
+% Task 9 - random_dna
 
 random_dna(N, M, Words) :- 
-    list_of_all_acgt_permutations(N, AllPerms),
-    random_permutation(AllPerms, AllPermsRandomOrder),
-    appendDnaWords(N, M, AllPermsRandomOrder, [], Words).
+    list_of_all_acgt_permutations(N, AllPerms),             % generate all possible Words of length
+    random_permutation(AllPerms, AllPermsRandomOrder),      % shuffle the order of the resulted AllPerms word list
+    appendDnaWords(N, M, AllPermsRandomOrder, [], Words).   % use the helper function from Task 8 to append the words in the shuffled order 
+                                                            % - this will result a different Word list on every invocation of random_dna
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Task 10
@@ -275,6 +284,7 @@ random_dna(N, M, Words) :-
 dna_subset(N, Words, Subset) :-
     dna_subset(N, Words, [], Subset).
 
+<<<<<<< HEAD
 dna_subset(N, [H|T], Acc, Subset) :-
     increment(Acc, H, N),
     dna_subset(N, T, [H|Acc], Subset).  %if can insert Word to Acc, then insert it to Acc
@@ -284,3 +294,10 @@ dna_subset(N, [_|T], Acc, Subset) :-  %case were can't insert Word to Acc
 
 dna_subset(_, [], Acc, Subset) :-
     Acc = Subset.
+=======
+
+% % base case
+% dna_subset(N, Words, Words) :-
+%     Count(M, Words),
+%     is_dna(N, M, Words).
+>>>>>>> d3844a59f4f551bd2004774b990d7e0b1f076a90
