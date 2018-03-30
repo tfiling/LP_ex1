@@ -257,6 +257,10 @@ appendDnaWords(N, M, [_ | T], Acc, Words) :-
 
 appendDnaWords(_, 0, _, Words, Words).
 
+appendDnaWords(_, 0, _, Words, _) :-
+    writeln(Words),
+    fail.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Task 9
 
@@ -268,9 +272,15 @@ random_dna(N, M, Words) :-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Task 10
 
+dna_subset(N, Words, Subset) :-
+    dna_subset(N, Words, [], Subset).
 
-dna
-% base case
-dna_subset(N, Words, Words) :-
-    Count(M, Words),
-    is_dna(N, M, Words).
+dna_subset(N, [H|T], Acc, Subset) :-
+    increment(Acc, H, N),
+    dna_subset(N, T, [H|Acc], Subset).  %if can insert Word to Acc, then insert it to Acc
+
+dna_subset(N, [_|T], Acc, Subset) :-  %case were can't insert Word to Acc
+    dna_subset(N, T, Acc, Subset).
+
+dna_subset(_, [], Acc, Subset) :-
+    Acc = Subset.

@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % count tests - an example template
 
-:- include('ex1.pl'). % import the tested script
+:- consult('/Users/nivlipetz/Documents/bash/lp/hw/LP_ex1/ex1.pl'). % import the tested script
 
 test(1, [], 0).     % args: (index, arg1, arg2)
 test(2, ['A'], 1).
@@ -98,7 +98,30 @@ testIncrement :-
 testIncrement.
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% dna_subset tests
+
+test5(1,    8,
+            [['T','G','G','C','A','C','A','T'],
+            ['T','G','G','C','A','C','C','G'],
+            ['T','G','G','C','A','C','G','A'],
+            ['T','G','G','C','A','C','G','T'],
+            ['A','C','T','T','G','G','G','T'],
+            ['T','G','G','C','A','C','C','C'],
+            ['T','G','G','C','A','C','G','G'],
+            ['T','G','G','C','A','T','A','C'],
+            ['G','T','T','G','G','G','A','A']], 
+             _,
+             1).
+
+testSubset :-
+    test5(I, N, Words, Subset, ShouldPass),
+    (ShouldPass is 1 -> 
+        (dna_subset(N, Words, Subset) -> writeln(I: ok);writeln(I: failed)) ;
+        (dna_subset(N, Words, Subset) -> writeln(I: failed); writeln(I: ok))
+    ),
+    fail.
+testSubset.
 
 
-
-:- testCheckAllForPercentage, testCheckAllForReverseComplement, testIs_dna, testIncrement.
+:- testCheckAllForPercentage, testCheckAllForReverseComplement, testIs_dna, testIncrement, testSubset.
